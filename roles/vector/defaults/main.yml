@@ -1,4 +1,4 @@
-vector_template: vector.toml.j2
+vector_template: vector-beyond.toml.j2
 vector_config_file: /etc/vector/vector.toml
 vector_nightly: no
 vector_version: "{{ vector_nightly | ternary('nightly','latest') }}"

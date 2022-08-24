@@ -1,0 +1,36 @@
+# Set global options¬
+data_dir = "/var/lib/vector"¬
+¬
+{%- set loop_helper = {¬
+    "sources": (sources | default({})),¬
+    "transforms": (transforms | default({})),¬
+    "sinks": (sinks | default({}))¬
+} -%}¬
+¬
+{% macro looper(parentKey, key, value) %}¬
+  {% if value is string %}¬
+    {{ key }} = "{{ value }}"¬
+  {% elif value is mapping %}¬
+  [{{ parentKey }}.{{ key }}]¬
+  {% for skey, svalue in value.items() %}¬
+    {{ looper(parentKey+'.'+key, skey, svalue) }}¬
+  {% endfor %}¬
+  {% else %}¬
+      {{ key }} = {{ value | tojson }}¬
+  {% endif %}¬
+{% endmacro %}¬
+¬
+{% for name, cat in loop_helper.items() | sort(attribute='0') %}¬
+{% for key, value in cat.items() | sort(attribute='0') %}¬
+[{{ name }}.{{ key }}]¬
+  {% if value -%}¬
+    {%- if value is not string and value|length > 1 %}¬
+      {%- for skey, svalue in value.items() | sort(attribute='0', reverse=true)%}¬
+    {{ looper(name+'.'+key, skey, svalue) }}¬
+      {%- endfor %}¬
+    {% else %}¬
+      {{ value }}¬
+    {% endif %}¬
+  {% endif %}¬
+{% endfor %}¬
+{% endfor %}¬
