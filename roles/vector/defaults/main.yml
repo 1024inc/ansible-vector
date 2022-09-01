@@ -10,11 +10,10 @@ sources:
     type: journald
     current_boot_only: true
       - journald
-    pattern: '(?<capture>\\d+)%{GREEDYDATA}'
 sinks:
   console:
     type: console
-    encoding.codec: json
     inputs:
-      - grok
+      - journald
+    encoding.codec: json
 
