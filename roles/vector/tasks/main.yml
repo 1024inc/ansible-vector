@@ -66,6 +66,6 @@
 
 - name: Start Vector
   service:
-    state: started
-    enabled: yes
+    state: "{{ vector_enabled | bool | ternary('started', 'stopped') }}"
+    enabled: "{{ vector_enabled }}"
     name: vector
